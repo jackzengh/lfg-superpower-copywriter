@@ -69,7 +69,9 @@ export default function VideoResultDetailModal({
                 {formatDate(result.timestamp)}
               </span>
             </div>
-            <h2 className="text-3xl font-bold text-black dark:text-white">{result.fileName}</h2>
+            <h2 className="text-3xl font-bold text-black dark:text-white">
+              {result.fileName}
+            </h2>
           </div>
           <button
             onClick={onClose}

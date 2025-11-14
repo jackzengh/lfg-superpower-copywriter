@@ -41,17 +41,22 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes);
 
     // Create temporary file path
-    const tmpDir = join(process.cwd(), "tmp");
+    // In serverless environments (Vercel/Lambda), use /tmp directly
+    // In local development, use a tmp directory in the project
+    const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+    const tmpDir = isServerless ? "/tmp" : join(process.cwd(), "tmp");
     const timestamp = Date.now();
     const fileName = `${timestamp}-${file.name}`;
     const filePath = join(tmpDir, fileName);
 
-    // Ensure tmp directory exists
-    try {
-      const fs = await import("fs/promises");
-      await fs.mkdir(tmpDir, { recursive: true });
-    } catch (err) {
-      console.error("Error creating tmp directory:", err);
+    // Ensure tmp directory exists (only needed for local development)
+    if (!isServerless) {
+      try {
+        const fs = await import("fs/promises");
+        await fs.mkdir(tmpDir, { recursive: true });
+      } catch (err) {
+        console.error("Error creating tmp directory:", err);
+      }
     }
 
     // Write file temporarily
