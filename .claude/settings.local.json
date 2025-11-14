@@ -3,7 +3,9 @@
     "allow": [
       "Bash(npx create-next-app@latest:*)",
       "Bash(npm install)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(npm run build:*)",
+      "WebFetch(domain:superpower.com)"
     ],
     "deny": [],
     "ask": []

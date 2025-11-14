@@ -43,45 +43,44 @@ export default function SavedResultsGrid({
   };
 
   return (
-    <div className="mt-12">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Saved Ad Copy ({results.length})
+    <div className="mt-20">
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-3xl font-bold text-black dark:text-white">
+          Saved Ad Copy <span className="text-secondary">({results.length})</span>
         </h2>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {results.map((result) => {
           const isVideo = result.type === "video";
-          const headline = result.data.claudeAdCopy?.headline || "No headline";
-          const description =
-            result.data.claudeAdCopy?.description || result.data.description;
+          const headline = result.claudeAdCopy?.headline || "No headline";
+          const description = result.claudeAdCopy?.description;
 
           return (
             <div
               key={result.id}
               onClick={() => onSelectResult(result)}
-              className={`bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden cursor-pointer transform transition-all duration-200 hover:scale-105 hover:shadow-xl ${
+              className={`bg-white dark:bg-black border border-border rounded-2xl overflow-hidden cursor-pointer transition-all duration-200 hover:border-primary hover:shadow-lg ${
                 deletingId === result.id ? "opacity-50 scale-95" : ""
               }`}
             >
               {/* Header with type badge and delete button */}
-              <div className="p-4 bg-gradient-to-r from-purple-500 to-blue-500 flex justify-between items-start">
+              <div className="p-6 border-b border-border flex justify-between items-start">
                 <div className="flex-1">
-                  <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-xs font-semibold rounded-full mb-2">
-                    {isVideo ? "📹 VIDEO" : "🖼️ IMAGE"}
+                  <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full mb-2">
+                    {isVideo ? "VIDEO" : "IMAGE"}
                   </span>
-                  <p className="text-white text-xs font-medium truncate">
+                  <p className="text-foreground text-sm font-medium truncate">
                     {result.fileName}
                   </p>
                 </div>
                 <button
                   onClick={(e) => handleDelete(e, result.id)}
-                  className="ml-2 p-1 hover:bg-white/20 rounded-full transition-colors"
+                  className="ml-2 p-2 hover:bg-primary/10 rounded-lg transition-colors group"
                   title="Delete"
                 >
                   <svg
-                    className="w-4 h-4 text-white"
+                    className="w-4 h-4 text-secondary group-hover:text-primary"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -97,31 +96,27 @@ export default function SavedResultsGrid({
               </div>
 
               {/* Content */}
-              <div className="p-4 space-y-3">
+              <div className="p-6 space-y-4">
                 {/* Headline */}
-                <h3 className="font-bold text-lg text-gray-900 dark:text-white line-clamp-2">
+                <h3 className="font-bold text-lg text-black dark:text-white line-clamp-2 leading-tight">
                   {headline}
                 </h3>
 
                 {/* Description preview */}
-                <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
-                  {truncateText(description, 120)}
+                <p className="text-sm text-secondary line-clamp-3 leading-relaxed">
+                  {truncateText(
+                    description || "Claude failed to load copy",
+                    120
+                  )}
                 </p>
 
                 {/* Footer with timestamp */}
-                <div className="pt-3 border-t border-gray-200 dark:border-gray-700">
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                <div className="pt-4 border-t border-border flex justify-between items-center">
+                  <p className="text-xs text-secondary">
                     {formatDate(result.timestamp)}
                   </p>
-                </div>
-              </div>
-
-              {/* Click to view indicator */}
-              <div className="px-4 pb-4">
-                <div className="flex items-center justify-between text-xs text-purple-600 dark:text-purple-400 font-medium">
-                  <span>Click to view full details</span>
                   <svg
-                    className="w-4 h-4"
+                    className="w-4 h-4 text-primary"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"

@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import MediaUpload from "@/components/VideoUpload";
 import SavedResultsGrid from "@/components/SavedResultsGrid";
-import ResultDetailModal from "@/components/ResultDetailModal";
-import { MediaAnalysisResult } from "@/lib/gemini";
+import VideoResultDetailModal from "@/components/VideoResultDetailModal";
+import ImageResultDetailModal from "@/components/ImageResultDetailModal";
 import {
   saveAnalysisResult,
   loadAllResults,
@@ -13,13 +13,11 @@ import {
 } from "@/lib/storage";
 
 export default function Home() {
-  const [results, setResults] = useState<MediaAnalysisResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [savedResults, setSavedResults] = useState<SavedAnalysisResult[]>([]);
   const [selectedResult, setSelectedResult] =
     useState<SavedAnalysisResult | null>(null);
-  const [currentFileName, setCurrentFileName] = useState<string>("");
 
   // Load saved results on mount
   useEffect(() => {
@@ -30,8 +28,6 @@ export default function Home() {
   const handleMediaUpload = async (file: File) => {
     setLoading(true);
     setError(null);
-    setResults(null);
-    setCurrentFileName(file.name);
 
     try {
       const formData = new FormData();
@@ -48,7 +44,6 @@ export default function Home() {
       }
 
       const data = await response.json();
-      setResults(data);
 
       // Save to local storage
       const savedResult = saveAnalysisResult(data, file.name);
@@ -58,12 +53,6 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleReset = () => {
-    setResults(null);
-    setError(null);
-    setCurrentFileName("");
   };
 
   const handleSelectResult = (result: SavedAnalysisResult) => {
@@ -80,34 +69,48 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+    <div className="min-h-screen bg-white dark:bg-black py-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto">
+        {/* Header Section */}
+        <div className="text-center mb-16">
+          <h1 className="text-5xl sm:text-6xl font-bold text-black dark:text-white mb-6 tracking-tight">
             LFG Superpower Ad Copy Generator
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
+          <p className="text-xl text-secondary max-w-3xl mx-auto leading-relaxed">
             Upload a video for transcription and scene analysis, or an image for
             ad copy and marketing insights
           </p>
         </div>
 
-        <MediaUpload
-          onUpload={handleMediaUpload}
-          loading={loading}
-          error={error}
-        />
+        {/* Upload Section */}
+        <div className="mb-16">
+          <MediaUpload
+            onUpload={handleMediaUpload}
+            loading={loading}
+            error={error}
+          />
+        </div>
+
+        {/* Results Grid */}
         <SavedResultsGrid
           results={savedResults}
           onSelectResult={handleSelectResult}
           onDeleteResult={handleDeleteResult}
         />
 
-        {/* Result Detail Modal */}
-        <ResultDetailModal
-          result={selectedResult}
-          onClose={handleCloseModal}
-        />
+        {/* Result Detail Modals */}
+        {selectedResult && selectedResult.type === "video" && (
+          <VideoResultDetailModal
+            result={selectedResult}
+            onClose={handleCloseModal}
+          />
+        )}
+        {selectedResult && selectedResult.type === "image" && (
+          <ImageResultDetailModal
+            result={selectedResult}
+            onClose={handleCloseModal}
+          />
+        )}
       </div>
     </div>
   );

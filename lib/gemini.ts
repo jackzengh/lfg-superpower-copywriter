@@ -8,6 +8,9 @@ if (!process.env.GEMINI_API_KEY) {
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
+/**
+ * Video analysis result with video-specific fields
+ */
 export interface VideoAnalysisResult {
   transcript: string;
   description: string;
@@ -15,6 +18,9 @@ export interface VideoAnalysisResult {
   claudeAdCopy?: AdCopy;
 }
 
+/**
+ * Image analysis result with image-specific fields
+ */
 export interface ImageAnalysisResult {
   description: string;
   adCopy: string[];
@@ -22,9 +28,10 @@ export interface ImageAnalysisResult {
   claudeAdCopy?: AdCopy;
 }
 
-export type MediaAnalysisResult =
-  | { type: "video"; data: VideoAnalysisResult }
-  | { type: "image"; data: ImageAnalysisResult };
+/**
+ * Union type for either video or image analysis results
+ */
+export type MediaAnalysisResult = VideoAnalysisResult | ImageAnalysisResult;
 
 export async function analyzeVideo(
   filePath: string,

@@ -63,12 +63,12 @@ export default function MediaUpload({
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8">
+    <div className="bg-white dark:bg-black border border-border rounded-2xl p-8">
       <div
-        className={`relative border-2 border-dashed rounded-lg p-12 text-center transition-colors ${
+        className={`relative border-2 border-dashed rounded-xl p-16 text-center transition-all ${
           dragActive
-            ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-            : "border-gray-300 dark:border-gray-600"
+            ? "border-primary bg-primary/5"
+            : "border-border hover:border-primary/30"
         }`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
@@ -84,9 +84,9 @@ export default function MediaUpload({
           disabled={loading}
         />
 
-        <div className="space-y-4">
+        <div className="space-y-6">
           <svg
-            className="mx-auto h-16 w-16 text-gray-400"
+            className="mx-auto h-20 w-20 text-secondary"
             stroke="currentColor"
             fill="none"
             viewBox="0 0 48 48"
@@ -102,41 +102,41 @@ export default function MediaUpload({
 
           {!selectedFile ? (
             <>
-              <div className="text-gray-600 dark:text-gray-300">
+              <div className="text-foreground">
                 <button
                   onClick={handleButtonClick}
-                  className="font-semibold text-blue-600 hover:text-blue-500 dark:text-blue-400"
+                  className="font-semibold text-primary hover:text-primary-dark transition-colors"
                   disabled={loading}
                 >
                   Click to upload
                 </button>{" "}
                 or drag and drop
               </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-secondary">
                 Videos: MP4, MOV, AVI | Images: JPG, PNG, WebP (up to 50MB)
               </p>
             </>
           ) : (
-            <div className="space-y-4">
-              <div className="text-sm text-gray-600 dark:text-gray-300">
+            <div className="space-y-6">
+              <div className="text-sm text-foreground">
                 <span className="font-semibold">Selected:</span>{" "}
                 {selectedFile.name}
               </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400">
+              <div className="text-xs text-secondary">
                 {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
               </div>
               <div className="flex gap-4 justify-center">
                 <button
                   onClick={handleSubmit}
                   disabled={loading}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  className="px-8 py-3 bg-primary text-white rounded-xl hover:bg-primary-dark disabled:bg-secondary disabled:cursor-not-allowed transition-all font-medium"
                 >
                   {loading ? "Analyzing..." : "Analyze Media"}
                 </button>
                 <button
                   onClick={() => setSelectedFile(null)}
                   disabled={loading}
-                  className="px-6 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="px-8 py-3 bg-transparent border border-border text-foreground rounded-xl hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all font-medium"
                 >
                   Clear
                 </button>
@@ -147,16 +147,16 @@ export default function MediaUpload({
       </div>
 
       {loading && (
-        <div className="mt-6 text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+        <div className="mt-8 text-center">
+          <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+          <p className="mt-3 text-sm text-secondary">
             Processing your media... This may take a minute.
           </p>
         </div>
       )}
 
       {error && (
-        <div className="mt-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+        <div className="mt-8 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
           <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
         </div>
       )}

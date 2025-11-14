@@ -261,7 +261,7 @@ Start today at superpower.com
 
     // Handle text response (fallback if tool wasn't used)
     if (firstBlock.type === "text") {
-      let responseText = firstBlock.text;
+      const responseText = firstBlock.text;
 
       // Try to parse as JSON
       try {

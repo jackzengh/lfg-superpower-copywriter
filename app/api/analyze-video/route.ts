@@ -61,35 +61,36 @@ export async function POST(request: NextRequest) {
       // Analyze media with Gemini based on type
       let result;
       if (isVideo) {
-        const videoResult = await analyzeVideo(filePath, file.type);
+        result = await analyzeVideo(filePath, file.type);
 
         // Generate ad copy with Claude using the description
         try {
           const claudeAdCopy = await generateAdCopy(
-            videoResult.description,
-            videoResult.transcript,
-            videoResult.scenes
+            result.description,
+            result.transcript,
+            result.scenes
           );
-          videoResult.claudeAdCopy = claudeAdCopy;
+          result.claudeAdCopy = claudeAdCopy;
         } catch (claudeError) {
           console.error("Error generating ad copy with Claude:", claudeError);
           // Continue without Claude ad copy if it fails
         }
-
-        result = { type: "video" as const, data: videoResult };
-      } else {
-        const imageResult = await analyzeImage(filePath, file.type);
+      } else if (isImage) {
+        result = await analyzeImage(filePath, file.type);
 
         // Generate ad copy with Claude using the description
         try {
-          const claudeAdCopy = await generateAdCopy(imageResult.description);
-          imageResult.claudeAdCopy = claudeAdCopy;
+          const claudeAdCopy = await generateAdCopy(result.description);
+          result.claudeAdCopy = claudeAdCopy;
         } catch (claudeError) {
           console.error("Error generating ad copy with Claude:", claudeError);
           // Continue without Claude ad copy if it fails
         }
-
-        result = { type: "image" as const, data: imageResult };
+      } else {
+        return NextResponse.json(
+          { error: "File must be a video or image" },
+          { status: 400 }
+        );
       }
 
       // Clean up temporary file
