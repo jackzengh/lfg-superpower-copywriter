@@ -4,6 +4,10 @@ import { generateAdCopy } from "@/lib/claude";
 import { writeFile, unlink } from "fs/promises";
 import { join } from "path";
 
+// Configure route segment for larger file uploads
+export const runtime = 'nodejs';
+export const maxDuration = 300; // 5 minutes for video processing
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();

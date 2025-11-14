@@ -39,8 +39,23 @@ export default function Home() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to analyze media");
+        // Try to parse JSON error, but handle non-JSON responses
+        let errorMessage = "Failed to analyze media";
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch {
+          // If response is not JSON (e.g., HTML error page)
+          const text = await response.text();
+          if (text.includes("too large") || text.includes("Too Large")) {
+            errorMessage = "File size is too large. Please try a smaller file (under 50MB).";
+          } else if (response.status === 413) {
+            errorMessage = "File size exceeds the upload limit. Please try a smaller file.";
+          } else {
+            errorMessage = `Server error (${response.status}): ${text.substring(0, 100)}`;
+          }
+        }
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
