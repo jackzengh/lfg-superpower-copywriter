@@ -1,4 +1,8 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import {
+  GoogleGenAI,
+  createUserContent,
+  createPartFromUri,
+} from "@google/genai";
 import { readFile } from "fs/promises";
 import { AdCopy } from "./claude";
 
@@ -6,7 +10,9 @@ if (!process.env.GEMINI_API_KEY) {
   throw new Error("GEMINI_API_KEY is not set in environment variables");
 }
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
 
 /**
  * Video analysis result with video-specific fields
@@ -38,12 +44,12 @@ export async function analyzeVideo(
   mimeType: string
 ): Promise<VideoAnalysisResult> {
   try {
-    // Read the video file
-    const videoData = await readFile(filePath);
-    const base64Video = videoData.toString("base64");
+    const myFile = await ai.files.upload({
+      file: filePath,
+      config: { mimeType: mimeType },
+    });
 
-    // Use Gemini 1.5 Pro for video analysis
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    console.log(myFile, "myFile");
 
     const prompt = `Please analyze this video and provide:
 
@@ -62,19 +68,19 @@ Please format your response as JSON with the following structure:
   "scenes": ["Scene 1 description", "Scene 2 description", ...]
 }`;
 
-    const result = await model.generateContent([
-      {
-        inlineData: {
-          mimeType: mimeType,
-          data: base64Video,
-        },
-      },
-      { text: prompt },
-    ]);
+    const result = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: createUserContent([
+        createPartFromUri(myFile.uri || "", myFile.mimeType || ""),
+        prompt,
+      ]),
+    });
 
-    const response = await result.response;
-    console.log(response);
-    const text = response.text();
+    console.log(result.text, "result text");
+
+    const response = await result;
+    const text = response.text || "";
+    console.log(text, "text");
 
     // Try to parse JSON from the response
     let parsedResult: VideoAnalysisResult;
@@ -159,7 +165,6 @@ export async function analyzeImage(
     const base64Image = imageData.toString("base64");
 
     // Use Gemini for image analysis
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const prompt = `Please analyze this image for advertising and marketing purposes. Provide:
 
@@ -180,18 +185,22 @@ Please format your response as JSON with the following structure:
   "visualElements": ["Element 1", "Element 2", "Element 3"],
 }`;
 
-    const result = await model.generateContent([
-      {
-        inlineData: {
-          mimeType: mimeType,
-          data: base64Image,
+    const result = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: [
+        {
+          inlineData: {
+            mimeType: mimeType,
+            data: base64Image,
+          },
         },
-      },
-      { text: prompt },
-    ]);
+        { text: prompt },
+      ],
+    });
 
-    const response = await result.response;
-    const text = response.text();
+    const response = await result;
+    const text = response.text || "";
+    console.log(text, "text");
 
     // Try to parse JSON from the response
     let parsedResult: ImageAnalysisResult;

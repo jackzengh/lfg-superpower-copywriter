@@ -31,15 +31,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // // Validate file size (50MB limit)
-    // const maxSize = 100 * 1024 * 1024; // 50MB
-    // if (file.size > maxSize) {
-    //   return NextResponse.json(
-    //     { error: "File size must be less than 100MB" },
-    //     { status: 400 }
-    //   );
-    // }
-
     // Convert file to buffer
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);

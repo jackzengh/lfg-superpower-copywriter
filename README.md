@@ -27,17 +27,21 @@ A Next.js application that uses Google's Gemini AI to transcribe and analyze vid
 ### Installation
 
 1. Install dependencies:
+
 ```bash
 npm install
 ```
 
 2. Set up your environment variables:
+
    - Copy `.env.local` and add your Gemini API key:
+
    ```
    GEMINI_API_KEY=your_actual_api_key_here
    ```
 
 3. Run the development server:
+
 ```bash
 npm run dev
 ```
@@ -56,7 +60,6 @@ npm run dev
 
 ## Limitations
 
-- Maximum file size: 50MB
 - Supported formats: MP4, MOV, AVI, and other common video formats
 - Processing time depends on video length and complexity
 
@@ -81,6 +84,7 @@ npm run dev
 ## Development
 
 To build for production:
+
 ```bash
 npm run build
 npm start
