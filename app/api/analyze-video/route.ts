@@ -5,7 +5,7 @@ import { writeFile, unlink } from "fs/promises";
 import { join } from "path";
 
 // Configure route segment for larger file uploads
-export const runtime = 'nodejs';
+export const runtime = "nodejs";
 export const maxDuration = 300; // 5 minutes for video processing
 
 export async function POST(request: NextRequest) {
@@ -47,7 +47,8 @@ export async function POST(request: NextRequest) {
     // Create temporary file path
     // In serverless environments (Vercel/Lambda), use /tmp directly
     // In local development, use a tmp directory in the project
-    const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+    const isServerless =
+      process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
     const tmpDir = isServerless ? "/tmp" : join(process.cwd(), "tmp");
     const timestamp = Date.now();
     const fileName = `${timestamp}-${file.name}`;
