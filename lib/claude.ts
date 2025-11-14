@@ -15,25 +15,6 @@ export interface AdCopy {
  * @returns Promise<AdCopy> - The generated headline and description
  */
 export async function generateAdCopy(adDescription: string): Promise<AdCopy> {
-  const tools = [
-    {
-      type: "web_search_20250305",
-      name: "web_search",
-      max_uses: 5,
-    },
-    {
-      name: "ad_copy",
-      description: "Write ad copy",
-      input_schema: {
-        type: "object",
-        properties: {
-          headline: { type: "string" },
-          description: { type: "string" },
-        },
-        required: ["headline", "description"],
-      },
-    },
-  ];
   try {
     const message = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
@@ -59,7 +40,25 @@ Return the response in the following JSON format without any additional text:
 }`,
         },
       ],
-      tools: tools,
+      tools: [
+        {
+          type: "web_search_20250305",
+          name: "web_search",
+          max_uses: 5,
+        },
+        {
+          name: "ad_copy",
+          description: "Write ad copy",
+          input_schema: {
+            type: "object",
+            properties: {
+              headline: { type: "string" },
+              description: { type: "string" },
+            },
+            required: ["headline", "description"],
+          },
+        },
+      ],
     });
 
     console.log(message.content, "message.content");
