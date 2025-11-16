@@ -144,33 +144,6 @@ Please format your response as JSON with the following structure:
   }
 }
 
-async function waitForFileActive(
-  fileName: string,
-  maxWaitSeconds = 60
-): Promise<void> {
-  const startTime = Date.now();
-  const maxWait = maxWaitSeconds * 1000;
-
-  while (Date.now() - startTime < maxWait) {
-    const fileStatus = await ai.files.get({ name: fileName });
-
-    if (fileStatus.state === "ACTIVE") {
-      return; // File is ready!
-    }
-
-    if (fileStatus.state === "FAILED") {
-      throw new Error("File upload failed");
-    }
-
-    // Wait before checking again
-    await new Promise((resolve) => setTimeout(resolve, 2000)); // Check every 2 seconds
-  }
-
-  throw new Error(
-    `File did not become ACTIVE within ${maxWaitSeconds} seconds`
-  );
-}
-
 function extractSection(text: string, section: string): string | null {
   const patterns = [
     new RegExp(`"${section}":\\s*"([^"]*)"`, "i"),
